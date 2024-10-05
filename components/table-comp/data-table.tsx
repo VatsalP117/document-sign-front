@@ -21,7 +21,8 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-
+import { Badge } from "@/components/ui/badge";
+import { PlusCircle, X } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import {
@@ -39,10 +40,38 @@ interface DataTableProps<TData, TValue> {
 }
 import { useEffect } from "react";
 import Link from "next/link";
+import FilePicker from "../file-picker";
 export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const [inputValue, setInputValue] = useState("");
+  const [values, setValues] = useState<string[]>([]);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const handleFileSelect = (file: File | null) => {
+    setSelectedFile(file);
+    if (file) {
+      console.log("Selected file:", file.name);
+      console.log("File size:", file.size, "bytes");
+      console.log("File type:", file.type);
+      // You can perform further operations with the file here
+      // For example, you could start an upload process
+    }
+  };
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleAddValue = () => {
+    if (inputValue.trim() !== "") {
+      setValues([...values, inputValue.trim()]);
+      setInputValue("");
+    }
+  };
+
+  const handleRemoveValue = (index: number) => {
+    setValues(values.filter((_, i) => i !== index));
+  };
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const table = useReactTable({
@@ -70,15 +99,89 @@ export function DataTable<TData, TValue>({
         <Input
           placeholder="Search Documents"
           value={
-            (table.getColumn("project_name")?.getFilterValue() as string) ?? ""
+            (table.getColumn("document_title")?.getFilterValue() as string) ??
+            ""
           }
           onChange={(event) => {
-            console.log(event.target.value);
-            table.getColumn("project_name")?.setFilterValue(event.target.value);
+            table
+              .getColumn("document_title")
+              ?.setFilterValue(event.target.value);
           }}
           className="max-w-sm"
         />
-        <Button>Submit Document for Approval</Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button>Submit New Document for Approval</Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px] lg:max-w-[820px]">
+            <DialogHeader>
+              <DialogTitle>Document for Approval</DialogTitle>
+              <DialogDescription>
+                Select the document and fill the details below. Supported file
+                types: .pdf, .doc, .docx.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="title" className="text-right">
+                  Document Title
+                </Label>
+                <Input id="title" className="col-span-3" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4 ">
+                <Label htmlFor="signatories" className="text-right">
+                  Add Signatories
+                </Label>
+                <div className="flex flex-row min-w-80 items-center gap-2">
+                  <Input
+                    id="signatories"
+                    type="text"
+                    placeholder="Enter Signatory Email"
+                    value={inputValue}
+                    onChange={handleInputChange}
+                    className="flex-grow"
+                  />
+                  <Button onClick={handleAddValue}>
+                    <PlusCircle className="w-4 h-4 mr-2" />
+                    Add
+                  </Button>
+                </div>
+              </div>
+              {values.length > 0 && (
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label className="text-right">Signatories Added</Label>
+                  <div className="flex flex-wrap min-w-96">
+                    {values.map((value, index) => (
+                      <Badge
+                        key={index}
+                        variant="secondary"
+                        className="px-3 py-1 my-2 mx-1"
+                      >
+                        {value}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="ml-2 h-auto p-0"
+                          onClick={() => handleRemoveValue(index)}
+                        >
+                          <X className="w-3 h-3" />
+                          <span className="sr-only">Remove</span>
+                        </Button>
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <FilePicker
+                onFileSelect={handleFileSelect}
+                accept=".pdf,.doc,.docx"
+              />
+            </div>
+            <DialogFooter>
+              <Button type="submit">Submit</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
       <div className="rounded-md border p-2 md:p-4 lg:p-6">
         <Table>

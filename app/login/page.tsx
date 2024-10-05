@@ -23,9 +23,6 @@ export default function LoginPage() {
           <div className="flex flex-col space-y-2 text-center items-center justify-center">
             <Icons.logo className="mx-auto h-8 w-8" />
             <h1 className="text-2xl font-semibold tracking-tight">Welcome</h1>
-            {/* <p className="text-sm text-muted-foreground">
-            Enter your email to sign in to your account
-          </p> */}
           </div>
           <Button
             className="flex flex-row justify-center items-center"
