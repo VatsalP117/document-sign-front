@@ -7,8 +7,8 @@ export default function UserCard({
   avatarUrl = "/placeholder.svg?height=100&width=100",
 }) {
   return (
-    <Card className="w-full md:w-3/4 max-w-md mx-auto">
-      <CardContent className="flex items-center space-x-4 p-6">
+    <Card className="w-full md:w-3/4 mx-auto border-2 border-brand">
+      <CardContent className="flex flex-wrap items-center justify-center p-4 gap-2">
         <Avatar className="h-20 w-20">
           <AvatarImage src={avatarUrl} alt={name} />
           <AvatarFallback>
@@ -19,9 +19,11 @@ export default function UserCard({
               .toUpperCase()}
           </AvatarFallback>
         </Avatar>
-        <div className="space-y-1">
+        <div className="flex flex-col items-center justify-center gap-1 flex-wrap">
           <h2 className="text-2xl font-bold">{name}</h2>
-          <p className="text-muted-foreground">{email}</p>
+          <p className="text-muted-foreground break-words overflow-wrap-anywhere">
+            {email}
+          </p>
         </div>
       </CardContent>
     </Card>

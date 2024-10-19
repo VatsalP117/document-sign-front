@@ -35,33 +35,28 @@ import { Checkbox } from "../ui/checkbox";
 
 async function getData(setData: any): Promise<Boolean> {
   // Fetch data from your API here.
-  setData([
-    {
-      id: "728ed52f",
-      document_title: "Test Document 1",
-      signatories: ["hod.csis@goa"],
-      status: "Pending",
-    },
-    {
-      id: "7dhjs8ed52f",
-      document_title: "Test Document 2",
-      signatories: ["hod.csis@goa", "xyz@abc.com"],
-      status: "Completed",
-    },
-  ]);
 
-  //   const response = await fetch("/api/student/getallprojects", {
-  //     method: "GET",
-  //     withCredentials: true,
-  //   });
-
-  //   if (response.status === 200) {
-  //     const data = await response.json();
-  //     setData(data);
-  //   } else {
-  //     console.log("Error in fetching data");
-  //   }
-
+  //get data from my api
+  const response = await fetch("/api/documents", {
+    method: "GET",
+    withCredentials: true,
+  });
+  if (response.status === 200) {
+    const data = await response.json();
+    console.log(data);
+    //need to map this data to our frontend key names
+    const newData = data.map((item: any) => {
+      return {
+        id: item.document_id,
+        document_title: item.title,
+        signatories: item.signatories,
+        drive_id: item.drive_file_id_out,
+        //capitalize the first letter of status
+        status: item.status.charAt(0).toUpperCase() + item.status.slice(1),
+      };
+    });
+    setData(newData);
+  }
   return true;
 }
 

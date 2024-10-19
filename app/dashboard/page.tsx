@@ -39,11 +39,12 @@ import { toast } from "sonner";
 import Logout from "@/components/logout";
 
 const Dashboard = (props: any) => {
+  console.log(props);
   return (
     <div className="flex h-[90vh] w-full p-10 lg:p-12 xl:p-14flex-row py-8 md:gap-6 lg:gap-10 xl:gap-12">
       <div className="basis-1/4  flex flex-col gap-10">
         <div className="flex flex-col gap-4">
-          <UserCard />
+          <UserCard name={props.user.name} email={props.user.email} avatarUrl={props.user.image}/>
           <div className="w-3/4 mx-auto">
             <Logout />
           </div>
@@ -56,5 +57,5 @@ const Dashboard = (props: any) => {
   );
 };
 
-// export default withAuth(Dashboard, "student");
-export default Dashboard;
+export default withAuth(Dashboard, "faculty");
+// export default Dashboard;

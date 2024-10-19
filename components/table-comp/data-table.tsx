@@ -41,11 +41,17 @@ interface DataTableProps<TData, TValue> {
 import { useEffect } from "react";
 import Link from "next/link";
 import FilePicker from "../file-picker";
+import { set } from "date-fns";
+import { setLazyProp } from "next/dist/server/api-utils";
+import { sign } from "crypto";
 export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
   const [inputValue, setInputValue] = useState("");
+  const [title, setTitle] = useState("");
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [values, setValues] = useState<string[]>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const handleFileSelect = (file: File | null) => {
@@ -109,7 +115,7 @@ export function DataTable<TData, TValue>({
           }}
           className="max-w-sm"
         />
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button>Submit New Document for Approval</Button>
           </DialogTrigger>
@@ -126,7 +132,12 @@ export function DataTable<TData, TValue>({
                 <Label htmlFor="title" className="text-right">
                   Document Title
                 </Label>
-                <Input id="title" className="col-span-3" />
+                <Input
+                  id="title"
+                  className="col-span-3"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
               </div>
               <div className="grid grid-cols-4 items-center gap-4 ">
                 <Label htmlFor="signatories" className="text-right">
@@ -178,7 +189,47 @@ export function DataTable<TData, TValue>({
               />
             </div>
             <DialogFooter>
-              <Button type="submit">Submit</Button>
+              <Button
+                type="submit"
+                disabled={loading}
+                onClick={async (e) => {
+                  console.log("Submitting...");
+                  setLoading(true);
+                  e.preventDefault();
+                  if (!selectedFile || title === "" || values.length === 0) {
+                    alert("Please enter valid input!");
+                    setLoading(false);
+                    return;
+                  }
+
+                  const formData = new FormData();
+                  formData.append("file", selectedFile);
+                  formData.append("title", title);
+                  formData.append("signatories", JSON.stringify(values));
+                  try {
+                    //send email and other stuff
+                    const response = await fetch("/api/upload", {
+                      method: "POST",
+                      body: formData,
+                    });
+                    setLoading(false);
+                    if (response.ok) {
+                      const result = await response.text();
+                      alert(result);
+                      setOpen(false);
+                    } else {
+                      throw new Error("File upload failed");
+                    }
+                  } catch (error) {
+                    setOpen(false);
+                    setLoading(false);
+                    console.error("Error:", error);
+                    alert("An error occurred while uploading the file.");
+                  }
+                }}
+              >
+                {loading ? "Loading..." : "Submit"}
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
