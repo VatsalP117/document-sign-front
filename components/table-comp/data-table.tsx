@@ -215,7 +215,9 @@ export function DataTable<TData, TValue>({
                     setLoading(false);
                     if (response.ok) {
                       const result = await response.text();
-                      alert(result);
+                      alert(
+                        "Document Uploaded Successfully! Refresh the page to see the changes."
+                      );
                       setOpen(false);
                     } else {
                       throw new Error("File upload failed");
@@ -273,7 +275,67 @@ export function DataTable<TData, TValue>({
                     {row.original.status === "Pending" ? (
                       <Button disabled>Download</Button>
                     ) : (
-                      <Button>Download</Button>
+                      <Button
+                        onClick={async () => {
+                          const fileId = row.original.drive_id;
+                          try {
+                            alert(
+                              "File download will begin in a few seconds. Please be patient and avoid clicking multiple times."
+                            );
+                            const response = await fetch(
+                              `/api/download/${fileId}`,
+                              {
+                                method: "GET",
+                              }
+                            );
+
+                            if (!response.ok)
+                              throw new Error("Download failed");
+
+                            // Get the filename from the custom header
+                            const contentDisposition = response.headers.get(
+                              "Content-Disposition"
+                            );
+                            let filename = "download"; // default filename
+
+                            if (contentDisposition) {
+                              const filenameRegex =
+                                /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                              const matches =
+                                filenameRegex.exec(contentDisposition);
+                              if (matches != null && matches[1]) {
+                                filename = matches[1].replace(/['"]/g, "");
+                              }
+                            }
+
+                            // If the regex method didn't work, try the custom header
+                            if (filename === "download") {
+                              const customFilename =
+                                response.headers.get("X-Filename");
+                              if (customFilename) {
+                                filename = decodeURIComponent(customFilename);
+                              }
+                            }
+
+                            const blob = await response.blob();
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement("a");
+                            a.style.display = "none";
+                            a.href = url;
+                            a.download = filename;
+                            document.body.appendChild(a);
+                            a.click();
+                            window.URL.revokeObjectURL(url);
+                          } catch (error) {
+                            alert(
+                              "An error occurred while downloading the file."
+                            );
+                            console.error("Error downloading file:", error);
+                          }
+                        }}
+                      >
+                        Download
+                      </Button>
                     )}
                   </TableCell>
                 </TableRow>

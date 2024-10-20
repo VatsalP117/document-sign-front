@@ -6,12 +6,13 @@ import { ArrowUpDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Badge } from "../ui/badge";
+import { access } from "fs";
 export type Document = {
   id: string;
   document_title: string;
   signatories: string[];
-  drive_id : string,
-  status: "Pending" | "Completed";
+  email: string;
+  drive_id: string;
 };
 
 export const columns: ColumnDef<Document>[] = [
@@ -38,7 +39,10 @@ export const columns: ColumnDef<Document>[] = [
       );
     },
   },
-
+  {
+    accessorKey: "email",
+    header: "Email",
+  },
   {
     accessorKey: "signatories",
     header: "Signatories",
@@ -53,9 +57,5 @@ export const columns: ColumnDef<Document>[] = [
         </div>
       );
     },
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
   },
 ];
