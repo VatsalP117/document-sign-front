@@ -52,6 +52,7 @@ async function getData(setData: any): Promise<Boolean> {
         signatories: item.signatories,
         drive_id: item.drive_file_id_in,
         email: item.uploader_email,
+        createdAt: item.createdAt.split("T")[0],
       };
     });
     setData(newData);

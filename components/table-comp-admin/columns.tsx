@@ -12,6 +12,7 @@ export type Document = {
   document_title: string;
   signatories: string[];
   email: string;
+  createdAt: string;
   drive_id: string;
 };
 
@@ -58,4 +59,8 @@ export const columns: ColumnDef<Document>[] = [
       );
     },
   },
+  // {
+  //   accessorKey: "createdAt",
+  //   header: "Date Uploaded",
+  // },
 ];

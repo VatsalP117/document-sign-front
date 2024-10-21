@@ -52,6 +52,16 @@ async function getData(setData: any): Promise<Boolean> {
         signatories: item.signatories,
         drive_id: item.drive_file_id_out,
         //capitalize the first letter of status
+        //the data received is a datetime object
+        //o convert to just a date string?
+        // createdAt: item.createdAt.toISOString().slice(0, 10),
+        // updatedAt:
+        //   item.status === "pending"
+        //     ? ""
+        //     : item.updatedAt.toISOString().slice(0, 10),
+        createdAt: item.createdAt.split("T")[0],
+        updatedAt:
+          item.status === "pending" ? "" : item.updatedAt.split("T")[0],
         status: item.status.charAt(0).toUpperCase() + item.status.slice(1),
       };
     });

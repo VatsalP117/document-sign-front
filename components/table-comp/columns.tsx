@@ -10,7 +10,9 @@ export type Document = {
   id: string;
   document_title: string;
   signatories: string[];
-  drive_id : string,
+  drive_id: string;
+  createdAt: string;
+  updatedAt: string;
   status: "Pending" | "Completed";
 };
 
@@ -53,6 +55,14 @@ export const columns: ColumnDef<Document>[] = [
         </div>
       );
     },
+  },
+  {
+    accessorKey: "createdAt",
+    header: "Date Uploaded",
+  },
+  {
+    accessorKey: "updatedAt",
+    header: "Date Signed",
   },
   {
     accessorKey: "status",
