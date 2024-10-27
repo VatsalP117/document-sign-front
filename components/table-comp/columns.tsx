@@ -33,7 +33,7 @@ export const columns: ColumnDef<Document>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex space-x-2">
-          <Link className="max-w-[500px] truncate font-medium" href="/login">
+          <Link className="max-w-[400px] break-words font-medium" href="/login">
             {row.getValue("document_title")}
           </Link>
         </div>

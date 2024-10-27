@@ -19,6 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -70,7 +71,11 @@ export function DataTable<TData, TValue>({
 
   const handleAddValue = () => {
     if (inputValue.trim() !== "") {
-      setValues([...values, inputValue.trim()]);
+      //only add if the value is not already in the array
+      if (!values.includes(inputValue.trim())) {
+        setValues([...values, inputValue.trim()]);
+      }
+      //clear the input value
       setInputValue("");
     }
   };
@@ -152,12 +157,23 @@ export function DataTable<TData, TValue>({
                     onChange={handleInputChange}
                     className="flex-grow"
                   />
+
                   <Button onClick={handleAddValue}>
                     <PlusCircle className="w-4 h-4 mr-2" />
                     Add
                   </Button>
                 </div>
               </div>
+              <Button
+                className="max-w-[200px] mx-auto"
+                onClick={() =>
+                  //check if hod.csis@goa.bits-pilani.ac.in is in the values array
+                  !values.includes("hod.csis@goa.bits-pilani.ac.in") &&
+                  setValues([...values, "hod.csis@goa.bits-pilani.ac.in"])
+                }
+              >
+                Quick Add : CSIS HOD
+              </Button>
               {values.length > 0 && (
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label className="text-right">Signatories Added</Label>
