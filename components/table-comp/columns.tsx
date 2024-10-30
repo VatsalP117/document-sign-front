@@ -13,7 +13,8 @@ export type Document = {
   drive_id: string;
   createdAt: string;
   updatedAt: string;
-  status: "Pending" | "Completed";
+  status: "Pending" | "Completed" | "Rejected";
+  remarks: string;
 };
 
 export const columns: ColumnDef<Document>[] = [

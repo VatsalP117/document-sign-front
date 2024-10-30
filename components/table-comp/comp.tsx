@@ -51,6 +51,7 @@ async function getData(setData: any): Promise<Boolean> {
         document_title: item.title,
         signatories: item.signatories,
         drive_id: item.drive_file_id_out,
+        remarks: item.remarks,
         //capitalize the first letter of status
         //the data received is a datetime object
         //o convert to just a date string?

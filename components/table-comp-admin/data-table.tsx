@@ -29,6 +29,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -53,6 +54,7 @@ export function DataTable<TData, TValue>({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [documentId, setDocumentId] = useState("");
+  const [rejectionReason, setRejectionReason] = useState("");
   const fileInputRef = useRef(null);
 
   const handleFileChange = async (event: any) => {
@@ -102,7 +104,7 @@ export function DataTable<TData, TValue>({
     },
   });
   useEffect(() => {
-    table.setPageSize(5);
+    table.setPageSize(8);
   }, []);
 
   return (
@@ -158,7 +160,63 @@ export function DataTable<TData, TValue>({
                     </TableCell>
                   ))}
                   <TableCell>
-                    <Button>Delete</Button>
+                    {/* <Button>Delete</Button> */}
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="destructive">Reject</Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle>Reject Document</DialogTitle>
+                          <DialogDescription>
+                            Are you sure you want to reject this document?
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label
+                              htmlFor="rejection-reason"
+                              className="text-right"
+                            >
+                              Reason for rejection
+                            </Label>
+                            <Input
+                              id="rejection-reason"
+                              defaultValue="No reason provided"
+                              value={rejectionReason}
+                              onChange={(e) =>
+                                setRejectionReason(e.target.value)
+                              }
+                              className="col-span-3"
+                            />
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <DialogClose asChild>
+                            <Button
+                              type="submit"
+                              onClick={async () => {
+                                console.log(row.original.id);
+                                fetch("/api/reject-document", {
+                                  method: "POST",
+                                  headers: {
+                                    "Content-Type": "application/json",
+                                  },
+                                  credentials: "include",
+                                  body: JSON.stringify({
+                                    documentId: row.original.id,
+                                    rejectionReason: rejectionReason,
+                                  }),
+                                });
+                                alert("Refresh the page to see the changes");
+                              }}
+                            >
+                              Save changes
+                            </Button>
+                          </DialogClose>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
                   </TableCell>
                   <TableCell>
                     <Button

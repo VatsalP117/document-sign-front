@@ -4,7 +4,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
-
+import landingText from "@/utils/landingText";
 export default function LoginPage() {
   return (
     <div className="flex h-[90vh] w-screen flex-col items-center justify-center">
@@ -16,8 +16,8 @@ export default function LoginPage() {
         )}
       ></Link>
       <div className="flex flex-col gap-4 lg:flex-row">
-        <div className="basis-1/2">
-          <img src="https://illustrations.popsy.co/gray/studying.svg" />
+        <div className="flex basis-1/2 items-center justify-center">
+          <img src="/csislogo.gif" alt="CSIS logo" className="w-full" />
         </div>
         <div className="mx-auto flex w-full flex-col items-center justify-center space-y-6 sm:w-[350px]">
           <div className="flex flex-col space-y-2 text-center items-center justify-center">
@@ -36,6 +36,9 @@ export default function LoginPage() {
             Sign in with Google
           </Button>
           <p className="px-8 text-center text-sm text-muted-foreground">
+            {landingText}
+          </p>
+          {/* <p className="px-8 text-center text-sm text-muted-foreground">
             By clicking continue, you agree to our{" "}
             <Link
               href="/terms"
@@ -51,7 +54,7 @@ export default function LoginPage() {
               Privacy Policy
             </Link>
             .
-          </p>
+          </p> */}
         </div>
       </div>
     </div>
